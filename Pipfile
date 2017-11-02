@@ -12,6 +12,8 @@ requests = "*"
 
 [dev-packages]
 
+pyflakes = "*"
+"flake8" = "*"
 
 
 [requires]

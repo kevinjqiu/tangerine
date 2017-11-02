@@ -1,6 +1,7 @@
 from urllib.parse import urlencode
 import contextlib
 import requests
+import logging
 
 
 DEFAULT_LOCALE = 'en_CA'
@@ -24,8 +25,11 @@ class TangerineLoginFlow(object):
             return 'https://secure.tangerine.ca/web/Tangerine.html'
 
     def _get_init_tangerine(self, command):
-        return self.session.get(self._init_tangerine_url(command=command, device='web', locale=self.locale),
+        resp = self.session.get(self._init_tangerine_url(command=command, device='web', locale=self.locale),
                                 headers={'x-web-flavour': 'fbe'})
+        resp.raise_for_status()
+        logging.info(resp.text)
+        return resp
 
     def _post_tangerine(self, data):
         data = dict(data)
@@ -42,13 +46,15 @@ class TangerineLoginFlow(object):
             },
             data=data)
         resp.raise_for_status()
+        logging.info(resp.text)
         return resp
 
     def _get_tangerine(self, **kv):
-        r = self.session.get(self._tangerine_url(**kv),
-                             headers={'x-web-flavour': 'fbe', 'Accept': 'application/json'})
-        r.raise_for_status()
-        return r
+        resp = self.session.get(self._tangerine_url(**kv),
+                                headers={'x-web-flavour': 'fbe', 'Accept': 'application/json'})
+        resp.raise_for_status()
+        logging.info(resp.text)
+        return resp
 
     def end(self):
         self._get_init_tangerine('displayLogout')
@@ -66,27 +72,27 @@ class TangerineLoginFlow(object):
         question = r.json()['MessageBody']['Question']
         answer = self.secret_provider.get_security_challenge_answer(question)
 
-        r = self._post_tangerine(data={
+        self._post_tangerine(data={
             'command': 'verifyChallengeQuestion',
             'BUTTON': 'Next',
             'Answer': answer,
             'Next': 'Next',
         })
 
-        r = self._post_tangerine(data={
+        r = self._get_tangerine(command='displayPIN')
+        phrase = r.json()['MessageBody']['Phrase']
+
+        self._post_tangerine(data={
             'locale': self.locale,
             'command': 'validatePINCommand',
             'BUTTON': 'Go',
-            'PIN': self.secret_provider.get_password(),
+            'PIN': self.secret_provider.get_password(phrase),
             'Go': 'Next',
             'callSource': '4',
         })
 
-        print(r.text)
-        r = self._get_tangerine(command='PINPADPersonal')
-        print(r.text)
-        r = self._get_tangerine(command='displayAccountSummary', fill=1)
-        print(r.text)
+        self._get_tangerine(command='PINPADPersonal')
+        self._get_tangerine(command='displayAccountSummary', fill=1)
 
 
 class TangerineClient(object):
