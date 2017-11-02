@@ -17,13 +17,17 @@ class SecretProvider(metaclass=abc.ABCMeta):
 
 
 class InteractiveSecretProvider(SecretProvider):
+    def __init__(self, input=input, getpass=getpass.getpass):
+        self.input = input
+        self.getpass = getpass
+
     def get_username(self):
-        return input('Username: ')
+        return self.input('Username: ')
 
     def get_password(self, phrase: str):
         print('Phrase: {}'.format(phrase))
-        return getpass.getpass('PIN: ')
+        return self.getpass('PIN: ')
 
     def get_security_challenge_answer(self, challenge: str):
         print('Security challenge: {}'.format(challenge))
-        return input('Answer: ')
+        return self.input('Answer: ')

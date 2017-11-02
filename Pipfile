@@ -15,6 +15,7 @@ requests = "*"
 pyflakes = "*"
 "flake8" = "*"
 pytest = "*"
+mock = "*"
 
 
 [requires]
