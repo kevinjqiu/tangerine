@@ -56,6 +56,14 @@ class TangerineLoginFlow(object):
         logging.debug(resp.text)
         return resp
 
+    def _get_pin_phrase(self):
+        r = self._get_tangerine(command='displayPIN')
+        return r.json()['MessageBody']['Phrase']
+
+    def _get_security_challenge(self):
+        r = self._get_tangerine(command='displayChallengeQuestion')
+        return r.json()['MessageBody']['Question']
+
     def end(self):
         logging.info('Logging out...')
         self._get_init_tangerine('displayLogout')
@@ -70,8 +78,7 @@ class TangerineLoginFlow(object):
             'ACN': self.secret_provider.get_username(),
         })
 
-        r = self._get_tangerine(command='displayChallengeQuestion')
-        question = r.json()['MessageBody']['Question']
+        question = self._get_security_challenge()
         answer = self.secret_provider.get_security_challenge_answer(question)
 
         self._post_tangerine(data={
@@ -81,9 +88,7 @@ class TangerineLoginFlow(object):
             'Next': 'Next',
         })
 
-        r = self._get_tangerine(command='displayPIN')
-        phrase = r.json()['MessageBody']['Phrase']
-
+        phrase = self._get_pin_phrase()
         self._post_tangerine(data={
             'locale': self.locale,
             'command': 'validatePINCommand',
@@ -118,6 +123,50 @@ class TangerineClient(object):
         finally:
             self.login_flow.end()
 
-    def my_account(self):
+    def me(self):
         r = self.session.get(self._api('/v1/customers/my'))
         return r.json()
+
+    def accounts(self):
+        r = self.session.get(self._api('/pfm/v1/accounts'))
+        return r.json()
+
+    def transactions(self, account_ids, period_from, period_to):
+        # datetime format: 2017-10-03T00:00:00.000Z
+        params = {
+            'accountIdentifiers': ','.join(account_ids),
+            'hideAuthorizedStatus': True,
+            'periodFrom': period_from,
+            'periodTo': period_to,
+            'skip': 0,
+        }
+        r = self.session.get(self._api('/pfm/v1/transactions?{}'.format(urlencode(params))))
+        return r.json()
+
+    def get_transaction_download_token(self):
+        r = self.session.get(self._api('/v1/customers/my/security/transaction-download-token'))
+        return r.json()['token']
+
+    def download_ofx(self, account, start_date, end_date):
+        token = self.get_transaction_download_token()
+        file_name = 'transactions.qfx'
+        params = {
+            'fileType': 'OFX',
+            'ofxVersion': '102',
+            'sessionId': 'tng',
+            'orgName': 'Tangerine',
+            'bankId': '0614',
+            'language': 'eng',
+            'acctType': account['type'],
+            'acctNum': account['display_name'],
+            'acctName': account['nickname'],
+            'userDefined': token,
+            'startDate': start_date,
+            'endDate': end_date,
+            'orgId': 10951,
+            'custom.tag': 'customValue',
+            'csvheader': 'Date,Transaction,Name,Memo,Amount',
+        }
+        response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(file_name, urlencode(params)))
+        response.raise_for_status()
+        return response.text
