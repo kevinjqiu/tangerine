@@ -28,7 +28,7 @@ class TangerineLoginFlow(object):
         resp = self.session.get(self._init_tangerine_url(command=command, device='web', locale=self.locale),
                                 headers={'x-web-flavour': 'fbe'})
         resp.raise_for_status()
-        logging.info(resp.text)
+        logging.debug(resp.text)
         return resp
 
     def _post_tangerine(self, data):
@@ -46,20 +46,22 @@ class TangerineLoginFlow(object):
             },
             data=data)
         resp.raise_for_status()
-        logging.info(resp.text)
+        logging.debug(resp.text)
         return resp
 
     def _get_tangerine(self, **kv):
         resp = self.session.get(self._tangerine_url(**kv),
                                 headers={'x-web-flavour': 'fbe', 'Accept': 'application/json'})
         resp.raise_for_status()
-        logging.info(resp.text)
+        logging.debug(resp.text)
         return resp
 
     def end(self):
+        logging.info('Logging out...')
         self._get_init_tangerine('displayLogout')
 
     def start(self):
+        logging.info('Initiating Tangerine logging flow')
         self._get_init_tangerine('displayLogout')
         self._get_init_tangerine('displayLoginRegular')
 
