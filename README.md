@@ -1,3 +1,12 @@
+```
+ _____                           _            
+|_   _|_ _ _ __   __ _  ___ _ __(_)_ __   ___ 
+  | |/ _` | '_ \ / _` |/ _ \ '__| | '_ \ / _ \
+  | | (_| | | | | (_| |  __/ |  | | | | |  __/
+  |_|\__,_|_| |_|\__, |\___|_|  |_|_| |_|\___|
+                 |___/                        
+```
+
 tangerine
 =========
 
@@ -10,18 +19,6 @@ tangerine
    :alt: Latest Travis CI build status
 
 API for the Tangerine Bank
-
-Usage
------
-
-Installation
-------------
-
-Requirements
-^^^^^^^^^^^^
-
-Compatibility
--------------
 
 Licence
 -------
