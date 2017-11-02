@@ -2,7 +2,7 @@ from urllib.parse import urlencode
 import requests
 
 
-class TangerineScraper(object):
+class TangerineClient(object):
     def __init__(self, secret_provider, session=None):
         if session is None:
             session = requests.Session()
