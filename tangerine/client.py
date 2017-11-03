@@ -85,7 +85,7 @@ class TangerineClient(object):
             account_nickname = account['nickname']
         elif account['type'] == 'CREDIT_CARD':
             account_type = 'CREDITLINE'
-            account_details = self.get_account(account['number'])['account_summary']
+            account_details = self.get_account(account['number'])
             account_display_name = account_details['display_name']
             account_nickname = account_details['account_nick_name']
         else:
@@ -113,4 +113,11 @@ class TangerineClient(object):
         response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(quote(filename), urlencode(params)),
                                     headers={'Referer': 'https://www.tangerine.ca/app/'})
         response.raise_for_status()
-        return {'filename': filename, 'content': response.text}
+        local_filename = '{}_{}-{}.QFX'.format(account_nickname,
+                                               start_date.strftime('%Y%m%d'),
+                                               end_date.strftime('%Y%m%d'))
+        with open(local_filename, 'w') as f:
+            f.write(response.text)
+
+        logging.info('Saved: {}'.format(local_filename))
+        return local_filename
