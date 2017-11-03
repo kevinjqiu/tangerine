@@ -9,9 +9,6 @@
 
 
 [![Latest PyPI version](https://img.shields.io/pypi/v/tangerine.svg)](https://pypi.python.org/pypi/tangerine)
-.. image:: https://img.shields.io/pypi/v/tangerine.svg
-    :target: https://pypi.python.org/pypi/tangerine
-    :alt: Latest PyPI version
 
 API for the Tangerine Bank
 
@@ -21,4 +18,4 @@ Licence
 Authors
 -------
 
-`tangerine` was written by `Kevin J. Qiu <kevin@idempotent.ca>`_.
+tangerine was written by Kevin J. Qiu <kevin@idempotent.ca>
