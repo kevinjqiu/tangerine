@@ -50,4 +50,4 @@ class DictionaryBasedSecretProvider(SecretProvider):
         return self.secret_dict['password']
 
     def get_security_challenge_answer(self, challenge: str):
-        return self.secret_dict['security_questions'][challenge]
+        return self.secret_dict['security_questions'].get(challenge)
