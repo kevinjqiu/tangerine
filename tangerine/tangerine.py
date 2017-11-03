@@ -1,4 +1,5 @@
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
+import datetime
 import contextlib
 import requests
 import logging
@@ -127,46 +128,60 @@ class TangerineClient(object):
         r = self.session.get(self._api('/v1/customers/my'))
         return r.json()
 
-    def accounts(self):
+    def list_accounts(self):
         r = self.session.get(self._api('/pfm/v1/accounts'))
         return r.json()
 
-    def transactions(self, account_ids, period_from, period_to):
-        # datetime format: 2017-10-03T00:00:00.000Z
+    def get_account(self, account_id: str):
+        r = self.session.get(self._api('/v1/accounts/{}'.format(account_id)))
+        return r.json()
+
+    def list_transactions(self, account_ids, period_from: datetime.date, period_to: datetime.date):
         params = {
             'accountIdentifiers': ','.join(account_ids),
             'hideAuthorizedStatus': True,
-            'periodFrom': period_from,
-            'periodTo': period_to,
+            'periodFrom': period_from.strftime('%Y-%m-%dT00:00:00.000Z'),
+            'periodTo': period_to.strftime('%Y-%m-%dT00:00:00.000Z'),
             'skip': 0,
         }
         r = self.session.get(self._api('/pfm/v1/transactions?{}'.format(urlencode(params))))
         return r.json()
 
-    def get_transaction_download_token(self):
+    def _get_transaction_download_token(self):
         r = self.session.get(self._api('/v1/customers/my/security/transaction-download-token'))
+        r.raise_for_status()
         return r.json()['token']
 
-    def download_ofx(self, account, start_date, end_date):
-        token = self.get_transaction_download_token()
-        file_name = 'transactions.qfx'
+    def download_ofx(self, account, start_date: datetime.date, end_date: datetime.date):
+        if account['type'] == 'CHEQUING':
+            account_type = 'SAVINGS'
+        elif account['type'] == 'SAVINGS':
+            account_type = 'SAVINGS'
+        elif account['type'] == 'CREDIT_CARD':
+            account_type = 'CREDITLINE'
+        else:
+            raise RuntimeError('Transaction download is not supported for account type %r'.format(account['type']))
+
+        token = self._get_transaction_download_token()
+        file_name = '{}.QFX'.format(account['nickname'])
         params = {
-            'fileType': 'OFX',
+            'fileType': 'QFX',
             'ofxVersion': '102',
             'sessionId': 'tng',
             'orgName': 'Tangerine',
             'bankId': '0614',
             'language': 'eng',
-            'acctType': account['type'],
+            'acctType': account_type,
             'acctNum': account['display_name'],
             'acctName': account['nickname'],
             'userDefined': token,
-            'startDate': start_date,
-            'endDate': end_date,
+            'startDate': start_date.strftime('%Y%m%d'),
+            'endDate': end_date.strftime('%Y%m%d'),
             'orgId': 10951,
             'custom.tag': 'customValue',
             'csvheader': 'Date,Transaction,Name,Memo,Amount',
         }
-        response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(file_name, urlencode(params)))
+        response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(quote(file_name), urlencode(params)),
+                                    headers={'Referer': 'https://www.tangerine.ca/app/'})
         response.raise_for_status()
         return response.text
