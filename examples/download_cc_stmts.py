@@ -3,7 +3,6 @@ import json
 import logging
 import subprocess
 from tangerine import TangerineClient, DictionaryBasedSecretProvider
-from tangerine.exceptions import UnsupportedAccountTypeForDownload
 
 
 if __name__ == '__main__':

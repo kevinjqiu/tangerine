@@ -46,7 +46,7 @@ class TangerineClient(object):
         self.login_flow.start()
         try:
             yield
-        except:
+        except Exception:
             raise
         finally:
             self.login_flow.end()
