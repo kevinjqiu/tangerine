@@ -92,7 +92,7 @@ class TangerineClient(object):
             raise exceptions.UnsupportedAccountTypeForDownload(account['type'])
 
         token = self._get_transaction_download_token()
-        file_name = '{}.QFX'.format(account_nickname)
+        filename = '{}.QFX'.format(account_nickname)
         params = {
             'fileType': 'QFX',
             'ofxVersion': '102',
@@ -110,7 +110,7 @@ class TangerineClient(object):
             'custom.tag': 'customValue',
             'csvheader': 'Date,Transaction,Name,Memo,Amount',
         }
-        response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(quote(file_name), urlencode(params)),
+        response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(quote(filename), urlencode(params)),
                                     headers={'Referer': 'https://www.tangerine.ca/app/'})
         response.raise_for_status()
-        return response.text
+        return {'filename': filename, 'content': response.text}
