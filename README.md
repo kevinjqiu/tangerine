@@ -7,9 +7,8 @@
                  |___/                        
 ```
 
-tangerine
-=========
 
+[![Latest PyPI version](https://img.shields.io/pypi/v/tangerine.svg)](https://pypi.python.org/pypi/tangerine)
 .. image:: https://img.shields.io/pypi/v/tangerine.svg
     :target: https://pypi.python.org/pypi/tangerine
     :alt: Latest PyPI version
