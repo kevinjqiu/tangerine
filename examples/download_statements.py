@@ -17,13 +17,8 @@ if __name__ == '__main__':
     client = TangerineClient(secret_provider)
     with client.login():
         accounts = client.list_accounts()
-        for acct in accounts[8:]:
+        for acct in accounts:
             try:
-                acct_details = client.get_account(acct['number'])
-                # acct_details['credit_card']['cc_account_details']['card_details']['billing_cycle_ranges']
-                import pdb; pdb.set_trace()  # XXX BREAKPOINT
-                response = client.download_ofx(acct, FROM, TO)
-                with open(response['filename'], 'w') as f:
-                    f.write(response['content'])
+                client.download_ofx(acct, FROM, TO)
             except UnsupportedAccountTypeForDownload as e:
                 print(e)
