@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 DEFAULT_LOCALE = 'en_CA'
 
 
-def api_response(root_key=''):
+def api_response(root_key='', check_response_status=True):
     def decorator(fn):
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
             response_json = fn(*args, **kwargs)
-            if response_json['response_status']['status_code'] != 'SUCCESS':
+            if check_response_status and response_json['response_status']['status_code'] != 'SUCCESS':
                 raise exceptions.APIResponseError(response_json)
             if not root_key:
                 return response_json
@@ -74,8 +74,9 @@ class TangerineClient(object):
         }
         return self._api_get('/pfm/v1/transactions?{}'.format(urlencode(params)))
 
+    @api_response('token', check_response_status=False)
     def _get_transaction_download_token(self):
-        return self._api_get('/v1/customers/my/security/transaction-download-token')['token']
+        return self._api_get('/v1/customers/my/security/transaction-download-token')
 
     def download_ofx(self, account, start_date: datetime.date, end_date: datetime.date):
         if account['type'] == 'CHEQUING':
