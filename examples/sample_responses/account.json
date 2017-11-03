@@ -1,0 +1,51 @@
+{
+  "response_status": {
+    "status_code": "SUCCESS"
+  },
+  "restrictions": [],
+  "exchangeRates": [
+    {
+      "buy": 1.306,
+      "sell": 1.261,
+      "currency": "USD"
+    }
+  ],
+  "accounts": [
+    {
+      "number": "555555",
+      "account_balance": 1234.56,
+      "currency_type": "CAD",
+      "nickname": "N1",
+      "description": "Tangerine Chequing Account",
+      "display_name": "1231231213",
+      "type": "CHEQUING"
+    },
+    {
+      "number": "1231231",
+      "account_balance": 100.99,
+      "currency_type": "CAD",
+      "nickname": "N2",
+      "description": "Tangerine Savings Account",
+      "display_name": "00000000000",
+      "type": "SAVINGS"
+    },
+    {
+      "number": "31323334",
+      "account_balance": 99.99,
+      "currency_type": "CAD",
+      "nickname": "Tangerine Balanced Portfolio",
+      "description": "Self Directed TFSA",
+      "display_name": "00000000000",
+      "type": "MUTUAL_FUND"
+    },
+    {
+      "number": "3132333435",
+      "account_balance": 100.00,
+      "transfer_in_progress": false,
+      "currency_type": "CAD",
+      "description": "Tangerine Money-Back Credit Card",
+      "display_name": "1234 xxxx  xxxx 9999",
+      "type": "CREDIT_CARD"
+    }
+  ]
+}

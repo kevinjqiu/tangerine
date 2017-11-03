@@ -1,4 +1,6 @@
 from urllib.parse import urlencode, quote
+from . import exceptions
+import functools
 import datetime
 import contextlib
 import requests
@@ -103,6 +105,20 @@ class TangerineLoginFlow(object):
         self._get_tangerine(command='displayAccountSummary', fill=1)
 
 
+def api_response(root_key=''):
+    def decorator(fn):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            response_json = fn(*args, **kwargs)
+            if response_json['response_status']['status_code'] != 'SUCCESS':
+                raise exceptions.APIResponseError(response_json)
+            if not root_key:
+                return response_json
+            return response_json[root_key]
+        return wrapper
+    return decorator
+
+
 class TangerineClient(object):
     def __init__(self, secret_provider, session=None, locale=DEFAULT_LOCALE):
         if session is None:
@@ -110,9 +126,11 @@ class TangerineClient(object):
         self.session = session
         self.login_flow = TangerineLoginFlow(secret_provider, self.session, locale)
 
-    @staticmethod
-    def _api(path):
-        return 'https://secure.tangerine.ca/web/rest{}'.format(path)
+    def _api_get(self, path):
+        url = 'https://secure.tangerine.ca/web/rest{}'.format(path)
+        response = self.session.get(url)
+        response.raise_for_status()
+        return response.json()
 
     @contextlib.contextmanager
     def login(self):
@@ -124,19 +142,20 @@ class TangerineClient(object):
         finally:
             self.login_flow.end()
 
+    @api_response('customer')
     def me(self):
-        r = self.session.get(self._api('/v1/customers/my'))
-        return r.json()
+        return self._api_get('/v1/customers/my')
 
+    @api_response('accounts')
     def list_accounts(self):
-        r = self.session.get(self._api('/pfm/v1/accounts'))
-        return r.json()
+        return self._api_get('/pfm/v1/accounts')
 
+    @api_response('account_summary')
     def get_account(self, account_id: str):
-        r = self.session.get(self._api('/v1/accounts/{}'.format(account_id)))
-        return r.json()
+        return self._api_get('/v1/accounts/{}?billing-cycle-ranges=true'.format(account_id))
 
-    def list_transactions(self, account_ids, period_from: datetime.date, period_to: datetime.date):
+    @api_response('transactions')
+    def list_transactions(self, account_ids: list, period_from: datetime.date, period_to: datetime.date):
         params = {
             'accountIdentifiers': ','.join(account_ids),
             'hideAuthorizedStatus': True,
@@ -144,13 +163,10 @@ class TangerineClient(object):
             'periodTo': period_to.strftime('%Y-%m-%dT00:00:00.000Z'),
             'skip': 0,
         }
-        r = self.session.get(self._api('/pfm/v1/transactions?{}'.format(urlencode(params))))
-        return r.json()
+        return self._api_get('/pfm/v1/transactions?{}'.format(urlencode(params)))
 
     def _get_transaction_download_token(self):
-        r = self.session.get(self._api('/v1/customers/my/security/transaction-download-token'))
-        r.raise_for_status()
-        return r.json()['token']
+        return self._api_get('/v1/customers/my/security/transaction-download-token')['token']
 
     def download_ofx(self, account, start_date: datetime.date, end_date: datetime.date):
         if account['type'] == 'CHEQUING':
@@ -167,7 +183,7 @@ class TangerineClient(object):
             account_display_name = account_details['display_name']
             account_nickname = account_details['account_nick_name']
         else:
-            raise RuntimeError('Transaction download is not supported for account type %r'.format(account['type']))
+            raise exceptions.UnsupportedAccountTypeForDownload(account['type'])
 
         token = self._get_transaction_download_token()
         file_name = '{}.QFX'.format(account_nickname)

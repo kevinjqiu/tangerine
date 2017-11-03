@@ -6,4 +6,5 @@ __all__ = []
 
 
 from .tangerine import TangerineClient  # noqa
-from .secret_provider import SecretProvider, InteractiveSecretProvider  # noqa
+from .secret_provider import (
+    SecretProvider, InteractiveSecretProvider, DictionaryBasedSecretProvider)  # noqa

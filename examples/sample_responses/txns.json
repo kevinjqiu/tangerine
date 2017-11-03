@@ -1,0 +1,33 @@
+{
+  "response_status": {
+    "status_code": "SUCCESS"
+  },
+  "restrictions": [],
+  "links": null,
+  "transactions": [
+    {
+      "transaction_date": "2017-10-31T07:19:17",
+      "has_uncertain_categorization": false,
+      "amount": -9.9,
+      "comments": [],
+      "balance_after": 1000.00,
+      "is_split_child": null,
+      "description": "BLAH BLAH",
+      "type": "WITHDRAWAL",
+      "detected_categories": [
+        {
+          "score": 1,
+          "categoryId": 27
+        }
+      ],
+      "is_read": false,
+      "account_id": "33333333",
+      "originalAmount": -9.9,
+      "category_id": 27,
+      "id": 11111111,
+      "parent_transaction_id": "22222222-dddd-ffff-bbbb-cccccccccccc",
+      "posted_date": "2017-10-31T00:00:00",
+      "status": "POSTED"
+    }
+  ]
+}
