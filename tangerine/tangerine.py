@@ -155,15 +155,22 @@ class TangerineClient(object):
     def download_ofx(self, account, start_date: datetime.date, end_date: datetime.date):
         if account['type'] == 'CHEQUING':
             account_type = 'SAVINGS'
+            account_display_name = account['display_name']
+            account_nickname = account['nickname']
         elif account['type'] == 'SAVINGS':
             account_type = 'SAVINGS'
+            account_display_name = account['display_name']
+            account_nickname = account['nickname']
         elif account['type'] == 'CREDIT_CARD':
             account_type = 'CREDITLINE'
+            account_details = self.get_account(account['number'])['account_summary']
+            account_display_name = account_details['display_name']
+            account_nickname = account_details['account_nick_name']
         else:
             raise RuntimeError('Transaction download is not supported for account type %r'.format(account['type']))
 
         token = self._get_transaction_download_token()
-        file_name = '{}.QFX'.format(account['nickname'])
+        file_name = '{}.QFX'.format(account_nickname)
         params = {
             'fileType': 'QFX',
             'ofxVersion': '102',
@@ -172,8 +179,8 @@ class TangerineClient(object):
             'bankId': '0614',
             'language': 'eng',
             'acctType': account_type,
-            'acctNum': account['display_name'],
-            'acctName': account['nickname'],
+            'acctNum': account_display_name,
+            'acctName': account_nickname,
             'userDefined': token,
             'startDate': start_date.strftime('%Y%m%d'),
             'endDate': end_date.strftime('%Y%m%d'),
