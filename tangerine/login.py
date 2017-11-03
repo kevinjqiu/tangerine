@@ -2,6 +2,9 @@ from urllib.parse import urlencode
 import logging
 
 
+logger = logging.getLogger(__name__)
+
+
 class TangerineLoginFlow(object):
     def __init__(self, secret_provider, session, locale):
         self.secret_provider = secret_provider
@@ -23,7 +26,7 @@ class TangerineLoginFlow(object):
         resp = self.session.get(self._init_tangerine_url(command=command, device='web', locale=self.locale),
                                 headers={'x-web-flavour': 'fbe'})
         resp.raise_for_status()
-        logging.debug(resp.text)
+        logger.debug(resp.text)
         return resp
 
     def _post_tangerine(self, data):
@@ -41,14 +44,14 @@ class TangerineLoginFlow(object):
             },
             data=data)
         resp.raise_for_status()
-        logging.debug(resp.text)
+        logger.debug(resp.text)
         return resp
 
     def _get_tangerine(self, **kv):
         resp = self.session.get(self._tangerine_url(**kv),
                                 headers={'x-web-flavour': 'fbe', 'Accept': 'application/json'})
         resp.raise_for_status()
-        logging.debug(resp.text)
+        logger.debug(resp.text)
         return resp
 
     def _get_pin_phrase(self):
@@ -60,11 +63,11 @@ class TangerineLoginFlow(object):
         return r.json()['MessageBody']['Question']
 
     def end(self):
-        logging.info('Logging out...')
+        logger.info('Logging out...')
         self._get_init_tangerine('displayLogout')
 
     def start(self):
-        logging.info('Initiating Tangerine logging flow')
+        logger.info('Initiating Tangerine logging flow')
         self._get_init_tangerine('displayLogout')
         self._get_init_tangerine('displayLoginRegular')
 

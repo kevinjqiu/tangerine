@@ -8,6 +8,9 @@ import requests
 import logging
 
 
+logger = logging.getLogger(__name__)
+
+
 DEFAULT_LOCALE = 'en_CA'
 
 
@@ -119,5 +122,5 @@ class TangerineClient(object):
         with open(local_filename, 'w') as f:
             f.write(response.text)
 
-        logging.info('Saved: {}'.format(local_filename))
+        logger.info('Saved: {}'.format(local_filename))
         return local_filename
