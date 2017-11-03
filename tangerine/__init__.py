@@ -5,6 +5,6 @@ __author__ = 'Kevin J. Qiu <kevin@idempotent.ca>'
 __all__ = []
 
 
-from .tangerine import TangerineClient  # noqa
+from .client import TangerineClient  # noqa
 from .secret_provider import (
     SecretProvider, InteractiveSecretProvider, DictionaryBasedSecretProvider)  # noqa
