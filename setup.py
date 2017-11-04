@@ -22,6 +22,8 @@ setuptools.setup(
     description="API for the Tangerine Bank",
     long_description=open('README.md').read(),
 
+    include_package_data=True,
+
     packages=setuptools.find_packages(),
 
     install_requires=get_install_requires(),
