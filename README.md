@@ -10,6 +10,7 @@
 
 [![Latest PyPI version](https://img.shields.io/pypi/v/tangerine.svg)](https://pypi.python.org/pypi/tangerine)
 [![CircleCI](https://circleci.com/gh/kevinjqiu/tangerine.svg?style=svg)](https://circleci.com/gh/kevinjqiu/tangerine)
+[![codecov](https://codecov.io/gh/kevinjqiu/tangerine/branch/master/graph/badge.svg)](https://codecov.io/gh/kevinjqiu/tangerine)
 
 API and scraper for the Tangerine Bank (Canada).
 
