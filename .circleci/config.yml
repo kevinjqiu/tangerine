@@ -18,4 +18,6 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
+            pip install pytest mock flake8
+            make flake8
             make test
