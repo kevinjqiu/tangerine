@@ -1,8 +1,0 @@
-language: python
-install:
-    - pip install pipenv
-    - pipenv install --dev
-script:
-    - make test
-#after_success:
-#    coveralls
