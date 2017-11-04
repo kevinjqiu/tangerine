@@ -1,11 +1,8 @@
 language: python
-env:
-    - TOXENV=py35
-    - TOXENV=py36
 install:
     - pip install pipenv
     - pipenv install --dev
 script:
-    - tox
+    - make test
 #after_success:
 #    coveralls
