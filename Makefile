@@ -10,7 +10,7 @@ tag:
 
 incpatch:
 	python -c 'v=open("tangerine/VERSION").read(); v=list(map(int, v.split("."))); v[-1]+=1; v=".".join(map(str, v)); open("tangerine/VERSION", "w").write(v)'
-	git commit -a -m"Bump major version"
+	git commit -a -m"Bump patch version"
 
 incminor:
 	python -c 'v=open("tangerine/VERSION").read(); v=list(map(int, v.split("."))); v[1]+=1; v=".".join(map(str, v)); open("tangerine/VERSION", "w").write(v)'
@@ -18,7 +18,7 @@ incminor:
 
 incmajor:
 	python -c 'v=open("tangerine/VERSION").read(); v=list(map(int, v.split("."))); v[0]+=1; v=".".join(map(str, v)); open("tangerine/VERSION", "w").write(v)'
-	git commit -a -m"Bump patch version"
+	git commit -a -m"Bump major version"
 
 release:
 	make tag
