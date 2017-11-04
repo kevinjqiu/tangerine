@@ -14,6 +14,8 @@ requests = "*"
 
 pytest = "*"
 "flake8" = "*"
+pytest-cov = "*"
+mock = "*"
 
 
 [requires]
