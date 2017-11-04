@@ -3,3 +3,6 @@ flake8:
 
 test:
 	py.test --cov tests/ --cov tangerine tests
+
+release:
+	python setup.py sdist bdist_wheel upload
