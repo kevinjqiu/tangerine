@@ -1,0 +1,11 @@
+language: python
+env:
+    - TOXENV=py35
+    - TOXENV=py36
+install:
+    - pip install pipenv
+    - pipenv install --dev
+script:
+    - tox
+#after_success:
+#    coveralls
