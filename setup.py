@@ -1,4 +1,15 @@
 import setuptools
+import json
+
+
+def get_install_requires():
+    with open('Pipfile.lock') as f:
+        piplock = json.load(f)
+    return [
+        '{}{}'.format(dep, details['version'])
+        for dep, details in piplock['default'].items()
+    ]
+
 
 setuptools.setup(
     name="tangerine",
@@ -13,7 +24,7 @@ setuptools.setup(
 
     packages=setuptools.find_packages(),
 
-    install_requires=['requests'],
+    install_requires=get_install_requires(),
 
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
