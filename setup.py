@@ -13,7 +13,7 @@ def get_install_requires():
 
 setuptools.setup(
     name="tangerine",
-    version="0.1.1",
+    version=open('tangerine/VERSION').read(),
     url="https://github.com/kevinjqiu/tangerine",
 
     author="Kevin J. Qiu",
