@@ -73,6 +73,13 @@ class TangerineClient(object):
             'skip': 0,
         }
         return self._api_get('/pfm/v1/transactions?{}'.format(urlencode(params)))
+    
+    @api_response('pending_transactions')
+    def list_pending_transactions(self):
+        params = {
+            'include-mf-transactions': 'true',
+        }
+        return self._api_get('/v1/customers/my/pending-transactions?{}'.format(urlencode(params)))
 
     @api_response('token', check_response_status=False)
     def _get_transaction_download_token(self):
