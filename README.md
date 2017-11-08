@@ -76,10 +76,35 @@ with client.login():
 ```
 
 
+Contribution
+============
+
+Requirements:
+
+* Python 3
+* [pipenv](https://github.com/kennethreitz/pipenv)
+* basic knowledge of Python and git
+
+To contribute to the development, fork this repo to your github account, and clone it.
+
+```
+$ git clone https://YOUR-CLONE-URL tangerine
+$ cd tangerine
+$ pipenv install  # this creates the virtualenv and installs the dependencies
+$ pipenv shell    # this activates the virtualenv
+$ git checkout -b branch-for-feature-or-bug-fix
+HACK...HACK...HACK
+$ git commit ...
+$ git push
+```
+
+and send a PR :)
+
+
 Licence
 =======
 
-MIT.
+MIT
 
 
 Authors
