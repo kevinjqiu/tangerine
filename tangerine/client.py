@@ -73,7 +73,7 @@ class TangerineClient(object):
             'skip': 0,
         }
         return self._api_get('/pfm/v1/transactions?{}'.format(urlencode(params)))
-    
+
     @api_response('pending_transactions')
     def list_pending_transactions(self):
         params = {
