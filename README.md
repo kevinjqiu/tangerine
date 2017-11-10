@@ -106,8 +106,12 @@ Licence
 
 MIT
 
+Changelog
+=========
+
+See [CHANGELOG.md](CHANGELOG.md)
 
 Authors
 =======
 
-tangerine was written by Kevin J. Qiu <kevin@idempotent.ca>
+tangerine was written by Kevin J. Qiu <kevin@idempotent.ca> with [contributors](https://github.com/kevinjqiu/tangerine/graphs/contributors).
