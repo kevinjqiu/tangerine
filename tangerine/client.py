@@ -85,7 +85,16 @@ class TangerineClient(object):
     def _get_transaction_download_token(self):
         return self._api_get('/v1/customers/my/security/transaction-download-token')
 
-    def download_ofx(self, account, start_date: datetime.date, end_date: datetime.date):
+    def download_ofx(self, account, start_date: datetime.date, end_date: datetime.date, save=True):
+        """
+        Download OFX file.
+
+        :param account: The id of the account
+        :param start_date: The start date of the statement period
+        :param end_date: The end date of the statement period
+        :param save: Save to a file. If False, the content of the OFX will be returned
+        :return: The filename of the OFX file if save is True, otherwise the content of the OFX file
+        """
         if account['type'] == 'CHEQUING':
             account_type = 'SAVINGS'
             account_display_name = account['display_name']
@@ -124,11 +133,14 @@ class TangerineClient(object):
         response = self.session.get('https://ofx.tangerine.ca/{}?{}'.format(quote(filename), urlencode(params)),
                                     headers={'Referer': 'https://www.tangerine.ca/app/'})
         response.raise_for_status()
-        local_filename = '{}_{}-{}.QFX'.format(account_nickname,
-                                               start_date.strftime('%Y%m%d'),
-                                               end_date.strftime('%Y%m%d'))
-        with open(local_filename, 'w') as f:
-            f.write(response.text)
+        if save:
+            local_filename = '{}_{}-{}.QFX'.format(account_nickname,
+                                                start_date.strftime('%Y%m%d'),
+                                                end_date.strftime('%Y%m%d'))
+            with open(local_filename, 'w') as f:
+                f.write(response.text)
 
-        logger.info('Saved: {}'.format(local_filename))
-        return local_filename
+            logger.info('Saved: {}'.format(local_filename))
+            return local_filename
+        else:
+            return response.text
