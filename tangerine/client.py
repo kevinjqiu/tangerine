@@ -135,8 +135,8 @@ class TangerineClient(object):
         response.raise_for_status()
         if save:
             local_filename = '{}_{}-{}.QFX'.format(account_nickname,
-                                                start_date.strftime('%Y%m%d'),
-                                                end_date.strftime('%Y%m%d'))
+                                                   start_date.strftime('%Y%m%d'),
+                                                   end_date.strftime('%Y%m%d'))
             with open(local_filename, 'w') as f:
                 f.write(response.text)
 
